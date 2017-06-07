@@ -3,7 +3,7 @@
 Generates swagger 2.0 file from existing express 3 app.
 
 ## Problem
-I have express 3 apps and want migrate to Swagger 2. I'm using Postman and want to import my API as Postman collections. 
+I have express 4 apps and want migrate to Swagger 2. I'm using Postman and want to import my API as Postman collections. 
 
 
 ## Usage 
