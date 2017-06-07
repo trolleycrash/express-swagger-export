@@ -1,5 +1,5 @@
 /* jshint node:true, esversion:6 */
-module.exports = function express3toSwagger2(app, filepath, options = {
+module.exports = function express4toSwagger2(app, filepath, options = {
 	includeRoot: true
 }) {
 	let template = {
@@ -11,34 +11,51 @@ module.exports = function express3toSwagger2(app, filepath, options = {
 		"paths": {}
 	};
 	template = Object.assign(template, options.template);
+
+    var route, routes = [];
+
+    app._router.stack.forEach(function(middleware){
+        if(middleware.route){ // routes registered directly on the app
+            routes.push(middleware.route);
+        } else if(middleware.name === 'router'){ // router middleware
+            middleware.handle.stack.forEach(function(handler){
+                route = handler.route;
+                route && routes.push(route);
+            });
+        }
+    });
+
 	// export all files
-	Object.keys(app.routes).forEach(method => {
-		app.routes[method].forEach(r => {
-			// ignore non-string paths
-			if (typeof r.path !== 'string') {
-				return;
-			}
-			if ((r.path === '/' || r.path === '/*') && !options.includeRoot) {
-				return;
-			}
-			let endpointPath = Object.clone(r.path);
-			r.keys.forEach(key => {
-				// replace optional and required params
-				endpointPath = endpointPath.replace(`?:${key.name}`, `{${key.name}}`).replace(`:${key.name}`, `{${key.name}}`);
-			});
-			// create endpoint if not exists
-			if (!template.paths[endpointPath]) {
-				template.paths[endpointPath] = {};
-			}
-			template.paths[endpointPath][r.method] = {
-				"responses": {
-					"200": {
-						"description": `${r.method} ${endpointPath}`
-					}
+	routes.forEach(r => {
+		const last = r.stack[r.stack.length-1];
+		var method = last.method;
+		keys = last.keys;
+		// ignore non-string paths
+		if (typeof r.path !== 'string') {
+			return;
+		}
+		if ((r.path === '/' || r.path === '/*') && !options.includeRoot) {
+			return;
+		}
+		let endpointPath = JSON.parse(JSON.stringify(r.path));
+		endpointPath = endpointPath.replace(/:([^\/]+)/g, '{$1}');
+		// keys.forEach(key => {
+		// 	// replace optional and required params
+		// 	endpointPath = endpointPath.replace(`?:${key.name}`, `{${key.name}}`).replace(`:${key.name}`, `{${key.name}}`);
+		// });
+		// create endpoint if not exists
+		if (!template.paths[endpointPath]) {
+			template.paths[endpointPath] = {};
+		}
+		template.paths[endpointPath][method] = {
+			"responses": {
+				"200": {
+					"description": `${method} ${endpointPath}`
 				}
 			}
-		})
-	});
+		}
+	})
+	const fs = require('fs');
 	fs.writeFile(filepath, JSON.stringify(template, null, 2));
 	console.log(`express-swagger-export: API exported to ${filepath} file`);
 }
