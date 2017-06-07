@@ -1,19 +1,19 @@
 {
   "name": "express-swagger-export",
-  "version": "1.0.1",
-  "description": "Exports swagger 2.0 file from existing Express 3 application",
+  "version": "1.0.0",
+  "description": "Exports swagger 2.0 file from existing Express 4 application",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yetithefoot/express-swagger-export.git"
+    "url": "git+https://github.com/trolleycrash/express-swagger-export.git"
   },
-  "author": "Vlad Tsepelev <reg.yeti@gmail.com> (http://yetithefoot.com/)",
+  "author": "Thom Leigh <trolleycrash@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yetithefoot/express-swagger-export/issues"
+    "url": "https://github.com/trolleycrash/express-swagger-export/issues"
   },
-  "homepage": "https://github.com/yetithefoot/express-swagger-export#readme"
+  "homepage": "https://github.com/trolleycrash/express-swagger-export#readme"
 }
